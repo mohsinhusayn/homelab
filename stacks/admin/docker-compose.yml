@@ -1,0 +1,64 @@
+services:
+  homarr:
+    image: ghcr.io/homarr-labs/homarr:latest
+    container_name: homarr
+    hostname: homarr
+    restart: unless-stopped
+    ports:
+      - "${HOMARR_PORT}:7575"
+    volumes:
+      - ${HOMARR_APPDATA}:/appdata
+      - ${HOMARR_ICONS}:/app/public/icons
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${HOMARR_LOG_DIR}:/var/log/homarr
+    environment:
+      - TZ=${TZ}
+      - SECRET_ENCRYPTION_KEY=${HOMARR_SECRET_KEY}
+    networks:
+      - admin
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7575/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  filebrowser:
+    image: filebrowser/filebrowser:latest
+    container_name: filebrowser
+    hostname: filebrowser
+    restart: unless-stopped
+    ports:
+      - "${FILEBROWSER_PORT}:80"
+    volumes:
+      - ${FB_ROOT_DIR}:/srv
+      - ${FB_CONFIG_DIR}:/config
+      - ${FB_DB_DIR}:/database
+      - ${FB_LOG_DIR}:/var/log/filebrowser
+    environment:
+      - PUID=${FB_PUID}
+      - PGID=${FB_PGID}
+      - TZ=${TZ}
+    networks:
+      - admin
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  admin:
+    name: admin
+    driver: bridge
