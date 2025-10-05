@@ -1,0 +1,42 @@
+# Make changes as per your requirements
+
+services:
+
+  npm:
+    image: jc21/nginx-proxy-manager:2.11.2
+    container_name: npm
+    hostname: npm
+    restart: unless-stopped
+    ports:
+      - "${NPM_HTTP_PORT}:80"
+      - "${NPM_HTTPS_PORT}:443"
+      - "${NPM_ADMIN_PORT}:81"
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - ${STACK_DIR}/npm/data:/data
+      - ${STACK_DIR}/npm/letsencrypt:/etc/letsencrypt
+    networks:
+      - security
+      - cloud
+      - media
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${NPM_ADMIN_PORT}"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  security:
+    name: security
+    driver: bridge
+  cloud:
+    external: true
+  media:
+    external: true
