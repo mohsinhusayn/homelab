@@ -1,5 +1,5 @@
 #!/bin/bash
-# Start the cloud stack
+# Start the Cloud stack
 
 STACK_DIR=/home/(username)/stacks/cloud
 ENV_FILE="$STACK_DIR/cloud.env"

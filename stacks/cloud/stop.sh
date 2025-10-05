@@ -1,5 +1,5 @@
 #!/bin/bash
-# Stop the cloud stack
+# Stop the Cloud stack
 
 STACK_DIR=/home/(username)/stacks/cloud
 ENV_FILE="$STACK_DIR/cloud.env"
