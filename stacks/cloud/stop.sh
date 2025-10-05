@@ -1,5 +1,10 @@
 #!/bin/bash
 # Stop the cloud stack
 
-docker compose --env-file cloud.env -f docker-compose.yml down
-echo "Cloud stack stopped."
+STACK_DIR=/home/(username)/stacks/cloud
+ENV_FILE="$STACK_DIR/cloud.env"
+COMPOSE_FILE="$STACK_DIR/docker-compose.yml"
+
+# Stop the stack
+docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" down
+echo "🛑 Cloud stack stopped."

@@ -1,6 +1,9 @@
 #!/bin/bash
 # Restart the cloud stack
 
-./stop.sh
-./start.sh
-echo "Cloud stack restarted."
+STACK_DIR=/home/(username)/stacks/cloud
+
+# Call stop and start scripts using absolute paths
+bash "$STACK_DIR/stop.sh"
+bash "$STACK_DIR/start.sh"
+echo "🔄 Cloud stack restarted."

@@ -1,7 +1,9 @@
 # Make changes as per your requirements
 
 services:
+
   # ----------- Nextcloud Stack -----------
+  
   nextcloud:
     image: nextcloud:31.0.7-apache
     container_name: nextcloud-app
@@ -64,6 +66,7 @@ services:
       retries: 5
 
   # ----------- Immich Stack -----------
+
   immich-server:
     image: ghcr.io/immich-app/immich-server:release
     container_name: immich-server

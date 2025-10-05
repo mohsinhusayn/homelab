@@ -1,0 +1,158 @@
+# Make changes as per your requirements
+
+services:
+
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    hostname: jellyfin
+    restart: unless-stopped
+    networks:
+      - media
+    ports:
+      - "${JELLYFIN_PORT}:8096"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${STACK_DIR}/jellyfin/config:/config
+      - ${MEDIA_ROOT}/movies:/data/movies:ro
+      - ${MEDIA_ROOT}/tvs:/data/tv:ro
+      - ${STACK_DIR}/jellyfin/logs:/config/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${JELLYFIN_PORT}"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    hostname: sonarr
+    restart: unless-stopped
+    networks:
+      - media
+    ports:
+      - "${SONARR_PORT}:8989"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${STACK_DIR}/sonarr/config:/config
+      - ${MEDIA_ROOT}/tvs:/tvs
+      - ${STACK_DIR}/qbittorrent/downloads:/downloads
+      - ${STACK_DIR}/sonarr/logs:/config/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${SONARR_PORT}"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    hostname: radarr
+    restart: unless-stopped
+    networks:
+      - media
+    ports:
+      - "${RADARR_PORT}:7878"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${STACK_DIR}/radarr/config:/config
+      - ${MEDIA_ROOT}/movies:/movies
+      - ${STACK_DIR}/qbittorrent/downloads:/downloads
+      - ${STACK_DIR}/radarr/logs:/config/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${RADARR_PORT}"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    hostname: bazarr
+    restart: unless-stopped
+    networks:
+      - media
+    ports:
+      - "${BAZARR_PORT}:6767"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${STACK_DIR}/bazarr/config:/config
+      - ${MEDIA_ROOT}/movies:/movies
+      - ${MEDIA_ROOT}/tvs:/tvsS
+      - ${STACK_DIR}/bazarr/logs:/config/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${BAZARR_PORT}"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    hostname: prowlarr
+    restart: unless-stopped
+    networks:
+      - media
+    ports:
+      - "${PROWLARR_PORT}:9696"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${STACK_DIR}/prowlarr/config:/config
+      - ${STACK_DIR}/prowlarr/logs:/config/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${PROWLARR_PORT}"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  qbittorrent:
+    image: linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    hostname: qbittorrent
+    restart: unless-stopped
+    networks:
+      - media
+    ports:
+      - "${QBITTORRENT_WEBUI_PORT}:8081"       # Web UI
+      - "6881:6881"                            # Torrent TCP
+      - "6881:6881/udp"                        # Torrent UDP
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=${QBITTORRENT_WEBUI_PORT}
+    volumes:
+      - ${STACK_DIR}/qbittorrent/config:/config
+      - ${STACK_DIR}/qbittorrent/downloads:/downloads
+      - ${STACK_DIR}/qbittorrent/logs:/config/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  media:
+    name: media
+    driver: bridge
