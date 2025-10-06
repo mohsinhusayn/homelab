@@ -38,6 +38,3 @@ mkdir -p \
   /home/username/homelab/stacks/admin/filebrowser/root
 
 echo "Directories created successfully."
-
-# Note: "chmod +x mkdir.sh" to make the script executable
-# Run with "bash ./mkdir.sh"
